@@ -1,7 +1,7 @@
 import styled from 'styled-components/native'
 
 export const PosicionarBotaoVolta = styled.TouchableOpacity`
-  align-items: left;
+  align-items: flex-start;
   width: 32px;
   flex-direction: row;
 `
