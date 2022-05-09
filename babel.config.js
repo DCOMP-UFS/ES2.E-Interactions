@@ -5,6 +5,12 @@ module.exports = function(api) {
     plugins: [
       'react-native-reanimated/plugin',
       [
+        'styled-components', 
+        { 
+          ssr: true 
+        }
+      ],
+      [
       "module-resolver", 
       {
         alias: {
