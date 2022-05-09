@@ -23,6 +23,7 @@ module.exports = function(api) {
           '@/services': "./source/services",
           '@/navigation': "./source/navigation",
           '@/theme': './source/theme',
+          '@/data': './source/data',
         }
       }]
     ]
