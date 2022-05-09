@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { NavigationContainer } from '@react-navigation/native'
+import 'react-native-gesture-handler'
+import { NavigationContainer, DefaultTheme, Theme } from '@react-navigation/native'
+
+import DrawerProvider from '@/context/drawer-context'
 
 import Tabs from './routes/tabs'
 
@@ -12,11 +15,22 @@ declare global {
   }
 }
 
+const GlobalTheme: Theme = {
+  ...DefaultTheme,
+  dark: false,
+  colors: {
+    ...DefaultTheme.colors,
+    background: 'transparent',
+  },
+}
+
 const Navigations = () => {
   return (
-    <NavigationContainer>
-      <Tabs />
-    </NavigationContainer>
+    <DrawerProvider>
+      <NavigationContainer theme={GlobalTheme}>
+        <Tabs />
+      </NavigationContainer>
+    </DrawerProvider>
   )
 }
 

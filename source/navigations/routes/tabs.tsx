@@ -1,37 +1,38 @@
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 
-import { FontAwesome } from '@expo/vector-icons'
+import theme from '@/theme'
+import { FontAwesome, Fontisto } from '@expo/vector-icons'
 
-import HomeScreen from '@/screens/home-screen'
-import OptionsScreen from '@/screens/options-screen'
+import StackHome from './stacks/stack-home'
+import StackInteractions from './stacks/stack-interactions'
 
 const Tab = createMaterialBottomTabNavigator()
 
 const Tabs = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
-      activeColor="#f0edf6"
-      inactiveColor="#0f2f2f" // cinza
-      barStyle={{ backgroundColor: '#694fad' }}
+      initialRouteName="Interactions"
+      activeColor={theme.COLORS.ACTIVE_COLOR_ICON}
+      inactiveColor={theme.COLORS.INACTIVE_COLOR_ICON}
+      barStyle={{ backgroundColor: theme.COLORS.APPCOLOR }}
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={StackHome}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: 'Prontuários',
           tabBarIcon: ({ color }) => (
-            <FontAwesome adjustsFontSizeToFit name="home" color={color} size={26} />
+            <FontAwesome adjustsFontSizeToFit name="home" color={color} size={22} />
           ),
         }}
       />
       <Tab.Screen
-        name="Options"
-        component={OptionsScreen}
+        name="Interactions"
+        component={StackInteractions}
         options={{
-          tabBarLabel: 'Options',
+          tabBarLabel: 'Interações',
           tabBarIcon: ({ color }) => (
-            <FontAwesome adjustsFontSizeToFit name="gear" color={color} size={26} />
+            <Fontisto adjustsFontSizeToFit name="pills" size={22} color={color} />
           ),
         }}
       />
