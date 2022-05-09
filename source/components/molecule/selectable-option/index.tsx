@@ -27,7 +27,15 @@ const SelectableOption = ({ item, onPress, defaultSelected = false }: Props) => 
   return (
     <Pressable style={CardPressable} onPress={handlePress}>
       <Drug>{item.name}</Drug>
-      <FontAwesome name="check-circle" size={24} color={selected ? '#00a680' : '#ccc'} />
+      <FontAwesome
+        name="check-circle"
+        size={24}
+        color={selected ? '#00a680' : '#ccc'}
+        style={{
+          flex: 0.5,
+          width: '10%',
+        }}
+      />
     </Pressable>
   )
 }

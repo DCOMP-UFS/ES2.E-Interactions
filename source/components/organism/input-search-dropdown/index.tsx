@@ -10,7 +10,7 @@ import { Container, ContainerButtons } from './styles'
 
 const InputSearchDropdown = () => {
   const [data, setData] = useState(
-    drugs.slice(0, 50).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+    drugs.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
   )
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -72,6 +72,7 @@ const InputSearchDropdown = () => {
           contentContainerStyle={{
             paddingBottom: 200,
           }}
+          initialNumToRender={10}
           data={data}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <SelectableOption item={item} onPress={onChangeSelection} />}

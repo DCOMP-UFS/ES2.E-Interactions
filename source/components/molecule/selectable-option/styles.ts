@@ -4,6 +4,8 @@ import { RFValue } from 'react-native-responsive-fontsize'
 import styled from 'styled-components/native'
 
 export const Drug = styled.Text`
+  flex: 5;
+  width: 90%;
   font-size: ${RFValue(12)}px;
   font-weight: 800;
   font-variant: small-caps;
