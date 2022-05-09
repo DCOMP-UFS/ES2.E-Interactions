@@ -1,72 +1,65 @@
-import { Button, Text, View, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import { StyleSheet } from 'react-native'
 
-import { Container, Card } from './styles'
+import theme from '@/theme'
+import { FontAwesome5 } from '@expo/vector-icons'
+import BottomSheet from 'reanimated-bottom-sheet'
 
-/* 
-    View -> div
-    Text -> span
-    Image -> img
-    ScrollView -> div
-    FlatList -> div   
-*/
-
-const arrayexample = [ 1,2,3,4,5,6,7]
+import BottomSheetDrugAdd from './components/bottom-sheet-drug-add'
+import Fab from './components/fab'
+import { Container, CardContent, Button } from './styles'
 
 const HomeScreen = () => {
-  const [contador, setContador] = useState([1,2,3,4,5,6,7,8,9,10])
-    const [medicamentos, setMedicamentos] = useState([
-        {
-            name: 'Dipirona',
-            price: 'R$ 10,00',
-        },
-        {
-            name: 'Amoxicilina',
-            price: 'R$ 20,00',
-        },
-        {
-            name: 'Amoxicilina',
-            price: 'R$ 35,00',
-        },
-    ])
-  useEffect(() => {
-    
-  }, [contador])
+  const sheetRef = React.useRef(null)
+
+  const onOpenButtonSheet = () => sheetRef.current.snapTo('80%')
+  const onCloseButtonSheet = () => sheetRef.current.snapTo(0)
 
   return (
     <Container>
-        <View style={{
-            flex: 3,
-            backgroundColor: 'red',
-            width: 10,
+      <CardContent>
+        <Button title="Adicionar Medicamento" />
+      </CardContent>
+      <BottomSheet
+        ref={sheetRef}
+        snapPoints={[0, '80%']}
+        borderRadius={10}
+        enabledGestureInteraction
+        renderContent={() => <BottomSheetDrugAdd closeButtonSheet={onCloseButtonSheet} />}
+      />
+      <Fab
+        actions={[
+          {
+            icon: 'star',
+            color: theme.COLORS.APPCOLOR,
+            label: 'Star',
+            onPress: () => console.log('Pressed star'),
+          },
+          {
+            icon: () => <FontAwesome5 name="pills" size={24} color={theme.COLORS.APPCOLOR} />,
+            label: 'Interações',
+            onPress: () => console.log('Pressed email'),
+          },
+          {
+            icon: 'pill',
 
-        }}></View>
-        <View style={{
-            flex: 2,
-            backgroundColor: 'green',
-            width: '100%',
-
-        }}>
-            <FlatList 
-                data={medicamentos}
-                keyExtractor={medicamento => String(medicamento.name)}
-                renderItem={({ item: medicamento }) => (
-                    <Card>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{medicamento.name}</Text>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{medicamento.price}</Text>
-                    </Card>
-                )}
-            />
-        </View>
-      {/* <Text>{contador.join('-')}</Text>
-      <Button onPress={() => setContador(state => {
-        return [...state, state.length + 1]
-      })} title='+'/>
-      <Button onPress={() => setContador((state) => {
-        return state.filter((item, index) => index !== state.length - 1) 
-      })} title='-'/> */}
-  </Container>
+            color: theme.COLORS.APPCOLOR,
+            label: 'Adicionar Medicamento',
+            onPress: () => onOpenButtonSheet(),
+          },
+        ]}
+      />
+    </Container>
   )
 }
 
 export default HomeScreen
+
+const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+  },
+})

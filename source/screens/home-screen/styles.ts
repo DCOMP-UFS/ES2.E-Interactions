@@ -1,25 +1,32 @@
 import styled from 'styled-components/native'
 
 export const Container = styled.View`
-    flex: 1;
-    height: 100%;
-    width: 100%;
-    background-color: #f2f2f2;
-    justify-content: center;
-    align-items: center;
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 `
 
-export const  Header = styled.View`
-    flex: 1;
+export const CardContent = styled.View`
+  flex: 1;
+  max-height: 100%;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`
+export const Button = styled.Button`
+  flex: 1;
+  max-width: 100px;
+  width: 100px;
 `
 
-export const Card = styled.View`
-    display: flex;
-    flex: 10;
-    width: 150px;
-    flex-direction: row;
-    border-radius: 10px;
-    border-width: 1px;
-    border-color: black;
-    justify-content: space-between;
+export const Input = styled.TextInput`
+  color: gray;
+  font-weight: 500;
+  margin: 4px;
+  padding: 2px;
+  border-radius: 2px;
+  border-width: 0.4px;
+  border-color: gray;
 `
