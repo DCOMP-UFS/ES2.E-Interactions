@@ -1,110 +1,146 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
-import { Text, TouchableOpacity } from 'react-native'
+import { Button, FlatList, View } from 'react-native'
 import { Searchbar } from 'react-native-paper'
 
-import { Card, Container, ContainerList, CardContentText, FlatListCard } from './styles'
+import SelectableOption from '@/components/molecule/selectable-option'
 
-const MIN_VALUE_HEIGHT = 10
+import { Container, ContainerButtons } from './styles'
 
 const terms = [
   {
     id: 1,
-    term: 'term 1',
+    name: 'name 1',
   },
   {
     id: 2,
-    term: 'term 2',
+    name: 'name 2',
   },
   {
     id: 3,
-    term: 'term 3',
+    name: 'name 3',
   },
   {
     id: 4,
-    term: 'term 1',
+    name: 'name 4',
   },
   {
     id: 5,
-    term: 'term 2',
+    name: 'name 5',
   },
   {
     id: 6,
-    term: 'term 3',
+    name: 'name 6',
   },
   {
     id: 7,
-    term: 'term 1',
+    name: 'name 7',
   },
   {
     id: 8,
-    term: 'term 2',
+    name: 'name 8',
   },
   {
     id: 9,
-    term: 'term 3',
+    name: 'name 9',
   },
   {
     id: 10,
-    term: 'term 1',
+    name: 'name 10',
   },
   {
     id: 11,
-    term: 'term 2',
+    name: 'name 2',
   },
   {
     id: 12,
-    term: 'term 3',
+    name: 'name 3',
   },
 ]
 
 const InputSearchDropdown = () => {
+  const [data, setData] = useState(
+    terms.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+  )
   const [searchQuery, setSearchQuery] = useState('')
-  const [focus, setFocus] = useState(true)
-  const [searchExist, setSearchExist] = useState(false)
-  const [height, setHeight] = useState(0)
+
+  const [selectedItem, setSelectedItem] = useState([])
 
   const onChangeSearch = (query: string) => setSearchQuery(query)
 
-  const onClose = () => setFocus(false)
-  const onOpen = () => setFocus(true)
-
   useEffect(() => {
-    if (searchQuery.trim().length > 0) {
-      setSearchExist(true)
-    } else {
-      setSearchExist(false)
-    }
+    setData(() => {
+      const searchLowerCase = searchQuery.toLowerCase()
+      const newDataAll = terms.filter((item) => item.name.toLowerCase().includes(searchLowerCase))
+      const filtered = newDataAll.filter((item) => !selectedItem.includes(item))
+      return filtered
+    })
   }, [searchQuery])
+
+  const onChangeSelection = (item) => {
+    setSelectedItem((state) => [...state, item])
+    setData((state) => {
+      return state.filter((i) => i.id !== item.id)
+    })
+  }
+
+  const onRemoveSelection = (item) => {
+    setSelectedItem((state) => state.filter((i) => i.id !== item.id))
+    setData((state) =>
+      [...state, item].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+    )
+  }
 
   return (
     <Container>
       <Searchbar
-        onLayout={(props) => {
-          setHeight(props.nativeEvent.layout.height)
-        }}
         placeholder="Procure os Medicamentos"
         onChangeText={onChangeSearch}
         value={searchQuery}
-        onFocus={onOpen}
-        onBlur={onClose}
       />
-      {focus || searchExist ? (
-        <ContainerList top={height + MIN_VALUE_HEIGHT}>
-          <FlatListCard
-            data={terms}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <Card>
-                <CardContentText>{item.term}</CardContentText>
-                <TouchableOpacity>
-                  <Text>+</Text>
-                </TouchableOpacity>
-              </Card>
-            )}
-          />
-        </ContainerList>
-      ) : null}
+
+      <View>
+        <FlatList
+          ListHeaderComponent={() => (
+            <View
+              style={{
+                paddingBottom: 2,
+                marginBottom: 4,
+                borderBottomWidth: 2,
+                borderBottomColor: '#ccc',
+              }}
+            >
+              <FlatList
+                data={selectedItem}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <SelectableOption item={item} onPress={onRemoveSelection} defaultSelected />
+                )}
+              />
+            </View>
+          )}
+          contentContainerStyle={{
+            paddingBottom: 200,
+          }}
+          data={data}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <SelectableOption item={item} onPress={onChangeSelection} />}
+        />
+      </View>
+      <ContainerButtons>
+        <Button
+          title="Dispensar"
+          onPress={() => {
+            return
+          }}
+        />
+        <Button
+          title="Interagir"
+          onPress={() => {
+            return
+          }}
+        />
+      </ContainerButtons>
     </Container>
   )
 }
