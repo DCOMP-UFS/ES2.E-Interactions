@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import 'react-native-gesture-handler'
 import { NavigationContainer, DefaultTheme, Theme } from '@react-navigation/native'
 
 import DrawerProvider from '@/context/drawer-context'

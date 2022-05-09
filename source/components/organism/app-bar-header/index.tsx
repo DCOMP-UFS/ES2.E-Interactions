@@ -30,7 +30,7 @@ const CustomNavigationBar = ({ navigation, back, options }: Props) => {
       }}
     >
       <Appbar.Action
-        icon={() => <AntDesign name="menuunfold" size={RFValue(10)} color="white" />}
+        icon={() => <AntDesign name="menuunfold" size={RFValue(20)} color="white" />}
         onPress={openDrawer}
       />
       <Appbar.Content
@@ -38,7 +38,7 @@ const CustomNavigationBar = ({ navigation, back, options }: Props) => {
         titleStyle={{
           textTransform: 'lowercase',
           fontVariant: ['small-caps'],
-          fontSize: RFValue(10),
+          fontSize: RFValue(20),
           fontWeight: 'bold',
           textAlign: 'center',
         }}

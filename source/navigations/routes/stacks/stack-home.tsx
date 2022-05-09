@@ -9,7 +9,7 @@ const StackHome = () => {
     <StackTemplate
       items={[
         {
-          name: 'Home',
+          name: 'Home-Stack',
           component: HomeScreen,
           options: {
             tabBarLabel: 'Prontuários',

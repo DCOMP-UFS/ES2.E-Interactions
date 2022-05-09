@@ -9,7 +9,7 @@ const StackInteractions = () => {
     <StackTemplate
       items={[
         {
-          name: 'Interactions',
+          name: 'Interactions-Stack',
           component: InteractionsScreen,
           options: {
             tabBarLabel: 'Interações',

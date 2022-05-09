@@ -33,7 +33,6 @@ const DrawerProvider = (props: Props) => {
       <DrawerLayout
         ref={drawer}
         drawerWidth={250}
-        drawerLockMode="locked-closed"
         drawerPosition={DrawerLayout.positions.Left as DrawerPosition}
         drawerType="front"
         drawerBackgroundColor="#ddd"
