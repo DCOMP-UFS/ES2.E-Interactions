@@ -16,7 +16,7 @@ export default function App() {
         }}
         colors={['#55b390', '#6fcda8', '#88e6c0']}
       >
-        <Navigations />
+        
         <StatusBar style="auto" />
       </LinearGradient>
     </ProviderPaper>
