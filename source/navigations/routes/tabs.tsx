@@ -1,4 +1,4 @@
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 import theme from '@/theme'
 import { FontAwesome, Fontisto } from '@expo/vector-icons'
@@ -6,15 +6,17 @@ import { FontAwesome, Fontisto } from '@expo/vector-icons'
 import StackHome from './stacks/stack-home'
 import StackInteractions from './stacks/stack-interactions'
 
-const Tab = createMaterialBottomTabNavigator()
+const Tab = createBottomTabNavigator()
 
 const Tabs = () => {
   return (
     <Tab.Navigator
       initialRouteName="Interactions"
-      activeColor={theme.COLORS.ACTIVE_COLOR_ICON}
-      inactiveColor={theme.COLORS.INACTIVE_COLOR_ICON}
-      barStyle={{ backgroundColor: theme.COLORS.APPCOLOR }}
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: theme.COLORS.ACTIVE_COLOR_ICON,
+        tabBarInactiveTintColor: theme.COLORS.INACTIVE_COLOR_ICON,
+      }}
     >
       <Tab.Screen
         name="Home"
