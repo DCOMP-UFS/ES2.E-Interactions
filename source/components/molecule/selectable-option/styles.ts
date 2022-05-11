@@ -7,7 +7,7 @@ export const Drug = styled.Text`
   flex: 5;
   width: 90%;
   font-size: ${RFValue(12)}px;
-  font-weight: 800;
+  font-weight: 600;
   font-variant: small-caps;
   text-transform: capitalize;
   color: #000;
@@ -27,3 +27,9 @@ export const CardPressable = ({ pressed }) =>
     borderBottomColor: '#ccc',
     elevation: 5,
   } as StyleProp<ViewStyle>)
+
+export const ContainerIcon = styled.View`
+  justify-content: center;
+  align-items: center;
+  position: relative;
+`

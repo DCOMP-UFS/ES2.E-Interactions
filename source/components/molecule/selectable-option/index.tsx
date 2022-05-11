@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { Pressable } from 'react-native'
 
+import theme from '@/theme'
 import { FontAwesome } from '@expo/vector-icons'
 
-import { Drug, CardPressable } from './styles'
+import { Drug, CardPressable, ContainerIcon } from './styles'
 
 type Item = {
-  id: number
+  id: number | string
   name: string
 }
 
@@ -27,15 +28,17 @@ const SelectableOption = ({ item, onPress, defaultSelected = false }: Props) => 
   return (
     <Pressable style={CardPressable} onPress={handlePress}>
       <Drug>{item.name}</Drug>
-      <FontAwesome
-        name="check-circle"
-        size={24}
-        color={selected ? '#00a680' : '#ccc'}
-        style={{
-          flex: 0.5,
-          width: '10%',
-        }}
-      />
+      <ContainerIcon>
+        <FontAwesome
+          name="check-circle"
+          size={24}
+          color={selected ? theme.COLORS.SELECT_ITEM_ICON : theme.COLORS.NO_SELECT_ITEM_ICON}
+          style={{
+            position: 'absolute',
+            right: 0,
+          }}
+        />
+      </ContainerIcon>
     </Pressable>
   )
 }
