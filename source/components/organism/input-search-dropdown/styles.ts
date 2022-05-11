@@ -25,8 +25,8 @@ export const ContainerActivityIndicator = styled.View`
 `
 
 export const ContainerSelected = styled.View`
-  padding-bottom: 2;
-  margin-bottom: 4;
-  border-bottom-width: 2;
+  padding-bottom: 2px;
+  margin-bottom: 4px;
+  border-bottom-width: 2px;
   border-bottom-color: #ccc;
 `
