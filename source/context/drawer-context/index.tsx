@@ -1,7 +1,10 @@
 /* eslint-disable react/prop-types */
 import React, { createContext, useContext, useRef } from 'react'
-import { View } from 'react-native'
 import { DrawerLayout, DrawerPosition } from 'react-native-gesture-handler'
+
+import { FontAwesome } from '@expo/vector-icons'
+
+import { Container, Button, ButtonContainer } from './styles'
 
 type Drawer = {
   openDrawer: () => void
@@ -15,9 +18,6 @@ type Props = {
 }
 
 const DrawerProvider = (props: Props) => {
-  const renderDrawer = () => {
-    return <View />
-  }
   const drawer = useRef<DrawerLayout>()
 
   const openDrawer = () => {
@@ -28,16 +28,34 @@ const DrawerProvider = (props: Props) => {
     drawer.current?.closeDrawer()
   }
 
+  const renderDrawer = () => {
+    return (
+      <Container>
+        <ButtonContainer>
+          <Button onPress={closeDrawer}>
+            <FontAwesome
+              name="arrow-left"
+              size={24}
+              color="#000"
+              style={{
+                padding: 12,
+              }}
+            />
+          </Button>
+        </ButtonContainer>
+      </Container>
+    )
+  }
+
   const Drawer = () => {
     return (
       <DrawerLayout
         ref={drawer}
         drawerWidth={250}
         drawerPosition={DrawerLayout.positions.Left as DrawerPosition}
-        drawerType="front"
-        drawerBackgroundColor="#ddd"
+        drawerType="slide"
+        drawerBackgroundColor="#f0f0f0"
         renderNavigationView={renderDrawer}
-        //onDrawerSlide={handleDrawerSlide}
       >
         {props.children}
       </DrawerLayout>
