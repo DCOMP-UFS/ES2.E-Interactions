@@ -15,10 +15,18 @@ export const ContainerButtons = styled.View`
   justify-content: space-evenly;
   align-items: center;
   width: 100%;
+  background-color: aliceblue;
 `
 
 export const ContainerActivityIndicator = styled.View`
   padding-vertical: 20px;
   justify-content: center;
   align-items: center;
+`
+
+export const ContainerSelected = styled.View`
+  padding-bottom: 2;
+  margin-bottom: 4;
+  border-bottom-width: 2;
+  border-bottom-color: #ccc;
 `

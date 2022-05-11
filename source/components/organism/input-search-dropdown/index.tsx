@@ -1,25 +1,30 @@
 /* eslint-disable react/prop-types */
 import React, { useMemo, useState } from 'react'
-import { Button, FlatList, View, ActivityIndicator } from 'react-native'
+import { Button, FlatList, ActivityIndicator } from 'react-native'
 import { Searchbar } from 'react-native-paper'
 
 import { drugs } from '@/data/drugs.json'
 
 import SelectableOption from '@/components/molecule/selectable-option'
 
-import { Container, ContainerButtons, ContainerActivityIndicator } from './styles'
+import {
+  Container,
+  ContainerButtons,
+  ContainerActivityIndicator,
+  ContainerSelected,
+} from './styles'
 
 drugs.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
 
-const SUM_MIN_ITEMS = 20
+const SUM_MIN_ITEMS = 10
 
 const InputSearchDropdown = () => {
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState(drugs)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [data, setData] = useState(() => drugs.map((item) => ({ ...item, selected: false })))
+  const [itemsPerPage, setItemsPerPage] = useState(SUM_MIN_ITEMS)
   const [searchQuery, setSearchQuery] = useState('')
 
-  const [selectedItem, setSelectedItem] = useState([])
+  const [selectedItem, setSelectedItem] = useState<typeof data>([])
 
   const onChangeSearch = (query: string) => setSearchQuery(query)
 
@@ -28,28 +33,33 @@ const InputSearchDropdown = () => {
       return data.slice(0, itemsPerPage)
     }
 
-    return data.filter((item) => item.name.includes(searchQuery)).slice(0, itemsPerPage)
+    return data
+      .filter((item) => {
+        const itemName = item.name.toLowerCase()
+        const query = searchQuery.toLowerCase()
+        return itemName.includes(query)
+      })
+      .slice(0, itemsPerPage)
   }, [data, searchQuery, itemsPerPage])
 
-  const onChangeSelection = (item) => {
-    setSelectedItem((state) => [...state, item])
-    setData((state) => {
-      return state.filter((i) => i.id !== item.id)
+  const onToggleSelection = (item) => {
+    setSelectedItem((state) => {
+      if (state.includes(item)) {
+        item.selected = false
+        return state.filter((stateItem) => stateItem !== item)
+      }
+      item.selected = true
+      return [...state, item]
     })
   }
 
-  const onRemoveSelection = (item) => {
-    setSelectedItem((state) => state.filter((i) => i.id !== item.id))
-    setData((state) =>
-      [...state, item].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
-    )
-  }
-
   const loadData = async () => {
-    setLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 100))
-    setItemsPerPage(itemsPerPage + SUM_MIN_ITEMS)
-    setLoading(false)
+    if (!(sliceData.length < itemsPerPage)) {
+      setLoading(true)
+      await new Promise((resolve) => setTimeout(resolve, 50))
+      setItemsPerPage(itemsPerPage + SUM_MIN_ITEMS)
+      setLoading(false)
+    }
   }
 
   const renderFooter = () => {
@@ -67,40 +77,35 @@ const InputSearchDropdown = () => {
         placeholder="Procure os Medicamentos"
         onChangeText={onChangeSearch}
         value={searchQuery}
+        style={{
+          zIndex: 10,
+        }}
       />
 
-      <View>
-        <FlatList
-          ListHeaderComponent={() => (
-            <View
-              style={{
-                paddingBottom: 2,
-                marginBottom: 4,
-                borderBottomWidth: 2,
-                borderBottomColor: '#ccc',
-              }}
-            >
-              <FlatList
-                data={selectedItem}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                  <SelectableOption item={item} onPress={onRemoveSelection} defaultSelected />
-                )}
-              />
-            </View>
-          )}
-          contentContainerStyle={{
-            paddingBottom: 200,
-          }}
-          initialNumToRender={10}
-          data={sliceData}
-          onEndReached={loadData}
-          ListFooterComponent={renderFooter}
-          onEndReachedThreshold={0.1}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <SelectableOption item={item} onPress={onChangeSelection} />}
-        />
-      </View>
+      <FlatList
+        ListHeaderComponent={() => (
+          <ContainerSelected>
+            <FlatList
+              data={selectedItem}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <SelectableOption item={item} onPress={onToggleSelection} />
+              )}
+            />
+          </ContainerSelected>
+        )}
+        contentContainerStyle={{
+          paddingBottom: 200,
+        }}
+        maxToRenderPerBatch={15}
+        initialNumToRender={10}
+        data={sliceData}
+        onEndReached={loadData}
+        ListFooterComponent={renderFooter}
+        onEndReachedThreshold={0.1}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <SelectableOption item={item} onPress={onToggleSelection} />}
+      />
       <ContainerButtons>
         <Button
           title="Dispensar"

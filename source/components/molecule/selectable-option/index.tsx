@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { Pressable } from 'react-native'
 
 import theme from '@/theme'
@@ -9,6 +9,7 @@ import { Drug, CardPressable, ContainerIcon } from './styles'
 type Item = {
   id: number | string
   name: string
+  selected: boolean
 }
 
 type Props = {
@@ -17,11 +18,14 @@ type Props = {
   defaultSelected?: boolean
 }
 
-const SelectableOption = ({ item, onPress, defaultSelected = false }: Props) => {
-  const [selected, setSelected] = useState(defaultSelected)
+const SelectableOption = ({ item, onPress }: Props) => {
+  const [selected, setSelected] = useState(item.selected)
+
+  useLayoutEffect(() => {
+    setSelected(item.selected)
+  }, [item.selected])
 
   const handlePress = () => {
-    setSelected(!selected)
     if (onPress) onPress(item)
   }
 
