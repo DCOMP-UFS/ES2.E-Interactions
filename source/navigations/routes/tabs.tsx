@@ -14,6 +14,10 @@ const Tabs = () => {
       initialRouteName="Interactions"
       screenOptions={{
         headerShown: false,
+        tabBarLabelPosition: 'below-icon',
+        tabBarStyle: {
+          backgroundColor: theme.COLORS.TABBAR,
+        },
         tabBarActiveTintColor: theme.COLORS.ACTIVE_COLOR_ICON,
         tabBarInactiveTintColor: theme.COLORS.INACTIVE_COLOR_ICON,
       }}

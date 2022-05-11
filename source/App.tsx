@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar'
 
 import Navigations from './navigations'
 
+import 'react-native-gesture-handler'
 
 export default function App() {
   return (
