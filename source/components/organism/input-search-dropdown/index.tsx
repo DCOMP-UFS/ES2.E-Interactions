@@ -7,11 +7,11 @@ import { drugs } from '@/data/drugs.json'
 
 import SelectableOption from '@/components/molecule/selectable-option'
 
-import { Container, ContainerButtons } from './styles'
+import { Container, ContainerButtons, ContainerActivityIndicator } from './styles'
 
 drugs.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
 
-const SUM_MIN_ITEMS = 5
+const SUM_MIN_ITEMS = 20
 
 const InputSearchDropdown = () => {
   const [loading, setLoading] = useState(false)
@@ -47,7 +47,7 @@ const InputSearchDropdown = () => {
 
   const loadData = async () => {
     setLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 200))
+    await new Promise((resolve) => setTimeout(resolve, 100))
     setItemsPerPage(itemsPerPage + SUM_MIN_ITEMS)
     setLoading(false)
   }
@@ -55,9 +55,9 @@ const InputSearchDropdown = () => {
   const renderFooter = () => {
     if (!loading) return null
     return (
-      <View>
-        <ActivityIndicator />
-      </View>
+      <ContainerActivityIndicator>
+        <ActivityIndicator color={'#fff'} size="large" />
+      </ContainerActivityIndicator>
     )
   }
 

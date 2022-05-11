@@ -16,3 +16,9 @@ export const ContainerButtons = styled.View`
   align-items: center;
   width: 100%;
 `
+
+export const ContainerActivityIndicator = styled.View`
+  padding-vertical: 20px;
+  justify-content: center;
+  align-items: center;
+`
