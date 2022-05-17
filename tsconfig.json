@@ -4,7 +4,7 @@
     "target": "ES2015",
     "module": "esnext",
     "types": [
-      "node"
+      "node",
     ],
     "allowJs": true,
     "strict": false,

@@ -7,7 +7,7 @@ import { FontAwesome } from '@expo/vector-icons'
 import { Drug, CardPressable, ContainerIcon } from './styles'
 
 type Item = {
-  id: number | string
+  rxcui: number | string
   name: string
   selected: boolean
 }
@@ -15,7 +15,6 @@ type Item = {
 type Props = {
   item: Item
   onPress?: (item: Item) => void
-  defaultSelected?: boolean
 }
 
 const SelectableOption = ({ item, onPress }: Props) => {
@@ -47,4 +46,4 @@ const SelectableOption = ({ item, onPress }: Props) => {
   )
 }
 
-export default SelectableOption
+export default React.memo(SelectableOption)

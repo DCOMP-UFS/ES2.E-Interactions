@@ -1,26 +1,50 @@
+/* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
-import React, { useMemo, useState } from 'react'
-import { Button, FlatList, ActivityIndicator } from 'react-native'
+import React, { useCallback, useMemo, useState } from 'react'
+import { FlatList, ActivityIndicator } from 'react-native'
 import { Searchbar } from 'react-native-paper'
-
-import { drugs } from '@/data/drugs.json'
 
 import SelectableOption from '@/components/molecule/selectable-option'
 
-import {
-  Container,
-  ContainerButtons,
-  ContainerActivityIndicator,
-  ContainerSelected,
-} from './styles'
-
-drugs.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+import { Container, ContainerActivityIndicator, ContainerSelected } from './styles'
 
 const SUM_MIN_ITEMS = 10
 
-const InputSearchDropdown = () => {
+type Options = {
+  name: string
+  rxcui: string
+}
+
+type Props = {
+  items: Options[]
+  onSelect: (items: Options[]) => void
+}
+
+type Data = Options & {
+  selected: boolean
+}
+
+type RefProps = {
+  current: {
+    onToggleSelection: (items: Options) => void
+    onRemoveItem: (state: Options[], items: Options) => void
+    onAddItem: (state: Options[], item: Options) => void
+    onClearItems: () => void
+  }
+}
+
+export type InputSearchDropdownProps = {
+  onToggleSelection: (items: Options) => void
+  onRemoveItem: (state: Options[], items: Options) => void
+  onAddItem: (state: Options[], item: Options) => void
+  onClearItems: () => void
+}
+
+const InputSearchDropdown = React.forwardRef(({ items, onSelect }: Props, ref: RefProps) => {
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState(() => drugs.map((item) => ({ ...item, selected: false })))
+  const [data, setData] = useState<Data[]>(() =>
+    items.map((item) => ({ ...item, selected: false }))
+  )
   const [itemsPerPage, setItemsPerPage] = useState(SUM_MIN_ITEMS)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -42,14 +66,35 @@ const InputSearchDropdown = () => {
       .slice(0, itemsPerPage)
   }, [data, searchQuery, itemsPerPage])
 
-  const onToggleSelection = (item) => {
+  const onRemoveItem = (state: Data[], item: Data) => {
+    item.selected = false
+    const newState = state.filter((stateItem) => stateItem.rxcui !== item.rxcui)
+    onSelect(newState)
+    return newState
+  }
+
+  const onAddItem = (state: Data[], item: Data) => {
+    item.selected = true
+    const newState = [...state, item]
+    onSelect(newState)
+    return newState
+  }
+
+  const onClearItems = () => {
+    selectedItem.forEach((item) => {
+      item.selected = false
+    })
+    setSelectedItem([])
+    onSelect([])
+  }
+
+  const onToggleSelection = (item: Data) => {
     setSelectedItem((state) => {
       if (state.includes(item)) {
-        item.selected = false
-        return state.filter((stateItem) => stateItem !== item)
+        return onRemoveItem(state, item)
       }
-      item.selected = true
-      return [...state, item]
+
+      return onAddItem(state, item)
     })
   }
 
@@ -71,6 +116,32 @@ const InputSearchDropdown = () => {
     )
   }
 
+  ref.current = {
+    onToggleSelection,
+    onRemoveItem,
+    onAddItem,
+    onClearItems,
+  }
+
+  const renderItem = useCallback(
+    ({ item }) => <SelectableOption item={item} onPress={onToggleSelection} />,
+    []
+  )
+
+  const keyExtractor = useCallback((item) => item.rxcui.toString(), [])
+
+  const renderHeaderList = () => (
+    <ContainerSelected>
+      <FlatList
+        data={selectedItem}
+        keyExtractor={(item) => item.rxcui.toString()}
+        renderItem={({ item }) => (
+          <SelectableOption item={item as any} onPress={onToggleSelection} />
+        )}
+      />
+    </ContainerSelected>
+  )
+
   return (
     <Container>
       <Searchbar
@@ -83,45 +154,22 @@ const InputSearchDropdown = () => {
       />
 
       <FlatList
-        ListHeaderComponent={() => (
-          <ContainerSelected>
-            <FlatList
-              data={selectedItem}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <SelectableOption item={item} onPress={onToggleSelection} />
-              )}
-            />
-          </ContainerSelected>
-        )}
+        ListHeaderComponent={renderHeaderList}
         contentContainerStyle={{
-          paddingBottom: 200,
+          paddingBottom: 10,
         }}
-        maxToRenderPerBatch={15}
+        maxToRenderPerBatch={8}
+        windowSize={8}
         initialNumToRender={10}
         data={sliceData}
         onEndReached={loadData}
         ListFooterComponent={renderFooter}
         onEndReachedThreshold={0.1}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <SelectableOption item={item} onPress={onToggleSelection} />}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
       />
-      <ContainerButtons>
-        <Button
-          title="Dispensar"
-          onPress={() => {
-            return
-          }}
-        />
-        <Button
-          title="Interagir"
-          onPress={() => {
-            return
-          }}
-        />
-      </ContainerButtons>
     </Container>
   )
-}
+})
 
 export default InputSearchDropdown

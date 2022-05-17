@@ -1,12 +1,12 @@
 import React from 'react'
 
 import theme from '@/theme'
-import { FontAwesome5 } from '@expo/vector-icons'
 import BottomSheet from 'reanimated-bottom-sheet'
 
 import BottomSheetDrugAdd from './components/bottom-sheet-drug-add'
+import DrugCard from './components/drug-card'
 import Fab from './components/fab'
-import { Container, CardContent, Button } from './styles'
+import { Container } from './styles'
 
 const HomeScreen = () => {
   const sheetRef = React.useRef(null)
@@ -16,9 +16,7 @@ const HomeScreen = () => {
 
   return (
     <Container>
-      <CardContent>
-        <Button title="Adicionar Medicamento" />
-      </CardContent>
+      <DrugCard />
       <BottomSheet
         ref={sheetRef}
         snapPoints={[0, '80%']}
@@ -28,17 +26,6 @@ const HomeScreen = () => {
       />
       <Fab
         actions={[
-          {
-            icon: 'star',
-            color: theme.COLORS.APPCOLOR,
-            label: 'Star',
-            onPress: () => console.log('Pressed star'),
-          },
-          {
-            icon: () => <FontAwesome5 name="pills" size={24} color={theme.COLORS.APPCOLOR} />,
-            label: 'Interações',
-            onPress: () => console.log('Pressed email'),
-          },
           {
             icon: 'pill',
 
