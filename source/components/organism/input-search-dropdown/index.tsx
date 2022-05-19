@@ -1,12 +1,14 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
 import React, { useCallback, useMemo, useState } from 'react'
-import { FlatList, ActivityIndicator } from 'react-native'
+import { SafeAreaView, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
 import { Searchbar } from 'react-native-paper'
 
 import SelectableOption from '@/components/molecule/selectable-option'
+import ViewList from '@/components/template/view-list'
 
-import { Container, ContainerActivityIndicator, ContainerSelected } from './styles'
+import { Container, ContainerSelected } from './styles'
 
 const SUM_MIN_ITEMS = 10
 
@@ -22,6 +24,7 @@ type Props = {
 
 type Data = Options & {
   selected: boolean
+  active: boolean
 }
 
 type RefProps = {
@@ -41,9 +44,8 @@ export type InputSearchDropdownProps = {
 }
 
 const InputSearchDropdown = React.forwardRef(({ items, onSelect }: Props, ref: RefProps) => {
-  const [loading, setLoading] = useState(false)
   const [data, setData] = useState<Data[]>(() =>
-    items.map((item) => ({ ...item, selected: false }))
+    items.map((item) => ({ ...item, selected: false, active: true }))
   )
   const [itemsPerPage, setItemsPerPage] = useState(SUM_MIN_ITEMS)
   const [searchQuery, setSearchQuery] = useState('')
@@ -54,27 +56,30 @@ const InputSearchDropdown = React.forwardRef(({ items, onSelect }: Props, ref: R
 
   const sliceData = useMemo(() => {
     if (searchQuery.trim().length === 0) {
-      return data.slice(0, itemsPerPage)
+      return data.filter((item) => !selectedItem.includes(item)).slice(0, itemsPerPage)
     }
 
     return data
       .filter((item) => {
         const itemName = item.name.toLowerCase()
         const query = searchQuery.toLowerCase()
-        return itemName.includes(query)
+        return itemName.includes(query) && !selectedItem.includes(item)
       })
       .slice(0, itemsPerPage)
-  }, [data, searchQuery, itemsPerPage])
+  }, [data, searchQuery, itemsPerPage, selectedItem])
 
   const onRemoveItem = (state: Data[], item: Data) => {
     item.selected = false
+    item.active = true
     const newState = state.filter((stateItem) => stateItem.rxcui !== item.rxcui)
+
     onSelect(newState)
     return newState
   }
 
   const onAddItem = (state: Data[], item: Data) => {
     item.selected = true
+    item.active = false
     const newState = [...state, item]
     onSelect(newState)
     return newState
@@ -100,20 +105,9 @@ const InputSearchDropdown = React.forwardRef(({ items, onSelect }: Props, ref: R
 
   const loadData = async () => {
     if (!(sliceData.length < itemsPerPage)) {
-      setLoading(true)
       await new Promise((resolve) => setTimeout(resolve, 50))
       setItemsPerPage(itemsPerPage + SUM_MIN_ITEMS)
-      setLoading(false)
     }
-  }
-
-  const renderFooter = () => {
-    if (!loading) return null
-    return (
-      <ContainerActivityIndicator>
-        <ActivityIndicator color={'#fff'} size="large" />
-      </ContainerActivityIndicator>
-    )
   }
 
   ref.current = {
@@ -123,51 +117,45 @@ const InputSearchDropdown = React.forwardRef(({ items, onSelect }: Props, ref: R
     onClearItems,
   }
 
-  const renderItem = useCallback(
-    ({ item }) => <SelectableOption item={item} onPress={onToggleSelection} />,
-    []
-  )
-
   const keyExtractor = useCallback((item) => item.rxcui.toString(), [])
 
-  const renderHeaderList = () => (
-    <ContainerSelected>
-      <FlatList
-        data={selectedItem}
-        keyExtractor={(item) => item.rxcui.toString()}
-        renderItem={({ item }) => (
-          <SelectableOption item={item as any} onPress={onToggleSelection} />
-        )}
-      />
-    </ContainerSelected>
+  const renderItem = useCallback(
+    ({ item }) => (
+      <SelectableOption key={keyExtractor(item)} item={item} onPress={onToggleSelection} />
+    ),
+    []
   )
 
   return (
     <Container>
-      <Searchbar
-        placeholder="Procure os Medicamentos"
-        onChangeText={onChangeSearch}
-        value={searchQuery}
-        style={{
-          zIndex: 10,
-        }}
-      />
-
-      <FlatList
-        ListHeaderComponent={renderHeaderList}
-        contentContainerStyle={{
-          paddingBottom: 10,
-        }}
-        maxToRenderPerBatch={8}
-        windowSize={8}
-        initialNumToRender={10}
-        data={sliceData}
-        onEndReached={loadData}
-        ListFooterComponent={renderFooter}
-        onEndReachedThreshold={0.1}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-      />
+      <ScrollView style={{ flexGrow: 1 }}>
+        <View>
+          <Searchbar
+            placeholder="Procure os Medicamentos"
+            onChangeText={onChangeSearch}
+            value={searchQuery}
+            style={{
+              zIndex: 10,
+            }}
+          />
+          <ContainerSelected>
+            {selectedItem.map((item) => (
+              <SelectableOption key={item.rxcui} item={item} onPress={onToggleSelection} />
+            ))}
+          </ContainerSelected>
+        </View>
+        <SafeAreaView>
+          <ViewList
+            onEndReached={loadData}
+            nestedScrollEnabled
+            style={{
+              maxHeight: 250,
+            }}
+          >
+            {sliceData.map((item) => renderItem({ item }))}
+          </ViewList>
+        </SafeAreaView>
+      </ScrollView>
     </Container>
   )
 })
