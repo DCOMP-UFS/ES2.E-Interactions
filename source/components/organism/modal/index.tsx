@@ -38,8 +38,10 @@ const ModalCustom = React.forwardRef(
       return () => setInformationSeverity(null)
     }, [severity])
 
+    const backgroundColor = severity.severity === 'high' ? 'red' : 'white'
+    
     const containerStyle: StyleProp<ViewStyle> = {
-      backgroundColor: '#fff',
+      backgroundColor: backgroundColor,
       padding: 16,
       width: '80%',
       height: '75%',
