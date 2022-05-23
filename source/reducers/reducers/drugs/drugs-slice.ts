@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 type Drugs = {
   id: number
   name: string
-  description: string
+  rxcui: string
   createdAt?: string
   updatedAt?: string
 }
@@ -14,15 +14,18 @@ const drugsSlice = createSlice({
   reducers: {
     drugAdded(state, action) {
       state.push({
-        id: action.payload.id,
+        id: action.payload.rxcui,
         name: action.payload.name,
-        description: action.payload.description,
+        rxcui: action.payload.rxcui,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       })
     },
+    drugRemove(state, action) {
+      state = state.filter((drug) => drug.rxcui !== action.payload.rxcui)
+    },
   },
 })
 
-export const { drugAdded } = drugsSlice.actions
+export const { drugAdded, drugRemove } = drugsSlice.actions
 export default drugsSlice.reducer

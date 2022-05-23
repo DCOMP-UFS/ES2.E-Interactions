@@ -24,6 +24,7 @@ module.exports = function(api) {
           '@/navigation': "./source/navigation",
           '@/theme': './source/theme',
           '@/data': './source/data',
+          '@/hooks': './source/hooks',
         }
       }]
     ]

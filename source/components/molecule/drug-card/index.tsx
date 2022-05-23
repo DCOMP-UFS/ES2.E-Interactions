@@ -1,11 +1,24 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
+import { useDispatch } from 'react-redux'
 
-import Day from './day'
+import { drugRemove } from '@/reducers/reducers/drugs/drugs-slice'
 
-const DrugCard = () => {
+type Props = {
+  name: string
+  rxcui: string
+}
+
+const DrugCard = ({ name, rxcui }: Props) => {
+  const dispatch = useDispatch()
+
+  const onRemoveDrug = () => {
+    dispatch(drugRemove(rxcui))
+  }
+
   return (
-    <View
+    <Pressable
+      onLongPress={onRemoveDrug}
       style={{
         flex: 1,
         justifyContent: 'center',
@@ -38,7 +51,7 @@ const DrugCard = () => {
             marginLeft: 10,
           }}
         >
-          Dipyrone
+          {name}
         </Text>
       </View>
       <View
@@ -46,28 +59,8 @@ const DrugCard = () => {
           paddingHorizontal: 10,
           flexDirection: 'row',
         }}
-      >
-        <Text
-          style={{
-            fontSize: 12,
-            textTransform: 'uppercase',
-            fontWeight: '800',
-          }}
-        >
-          Dosagem:
-        </Text>
-        <Text
-          style={{
-            fontSize: 12,
-            textTransform: 'uppercase',
-            marginLeft: 10,
-          }}
-        >
-          500mg
-        </Text>
-      </View>
-      <Day />
-    </View>
+      ></View>
+    </Pressable>
   )
 }
 

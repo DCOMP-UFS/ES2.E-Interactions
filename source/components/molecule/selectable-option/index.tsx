@@ -14,10 +14,11 @@ type Item = {
 
 type Props = {
   item: Item
+  isIcon?: boolean
   onPress?: (item: Item) => void
 }
 
-const SelectableOption = ({ item, onPress }: Props) => {
+const SelectableOption = ({ item, onPress, isIcon = true }: Props) => {
   const [selected, setSelected] = useState(item.selected)
 
   useLayoutEffect(() => {
@@ -31,17 +32,19 @@ const SelectableOption = ({ item, onPress }: Props) => {
   return (
     <Pressable style={CardPressable} onPress={handlePress}>
       <Drug>{item.name}</Drug>
-      <ContainerIcon>
-        <FontAwesome
-          name="check-circle"
-          size={24}
-          color={selected ? theme.COLORS.SELECT_ITEM_ICON : theme.COLORS.NO_SELECT_ITEM_ICON}
-          style={{
-            position: 'absolute',
-            right: 0,
-          }}
-        />
-      </ContainerIcon>
+      {isIcon && (
+        <ContainerIcon>
+          <FontAwesome
+            name="check-circle"
+            size={24}
+            color={selected ? theme.COLORS.SELECT_ITEM_ICON : theme.COLORS.NO_SELECT_ITEM_ICON}
+            style={{
+              position: 'absolute',
+              right: 0,
+            }}
+          />
+        </ContainerIcon>
+      )}
     </Pressable>
   )
 }

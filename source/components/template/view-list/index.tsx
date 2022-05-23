@@ -13,7 +13,7 @@ type Props = {
 } & ScrollViewProps
 
 const ViewList = React.forwardRef(({ children, onEndReached, ...rest }: Props, ref) => {
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(true)
 
   const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 125
@@ -39,7 +39,7 @@ const ViewList = React.forwardRef(({ children, onEndReached, ...rest }: Props, r
   }
 
   return (
-    <ScrollView {...rest} onScroll={endScroll} scrollEventThrottle={0}>
+    <ScrollView {...rest} onScroll={endScroll} scrollEventThrottle={0} nestedScrollEnabled>
       {children}
       {renderFooter()}
     </ScrollView>

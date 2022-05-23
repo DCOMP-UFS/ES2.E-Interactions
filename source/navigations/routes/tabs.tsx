@@ -13,6 +13,7 @@ const Tabs = () => {
     <Tab.Navigator
       initialRouteName="Interactions"
       screenOptions={{
+        tabBarHideOnKeyboard: true,
         headerShown: false,
         tabBarLabelPosition: 'below-icon',
         tabBarStyle: {

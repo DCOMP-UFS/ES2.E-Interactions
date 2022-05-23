@@ -1,12 +1,10 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
 import React, { useCallback, useMemo, useState } from 'react'
-import { SafeAreaView, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { View, useWindowDimensions, FlatList } from 'react-native'
 import { Searchbar } from 'react-native-paper'
 
 import SelectableOption from '@/components/molecule/selectable-option'
-import ViewList from '@/components/template/view-list'
 
 import { Container, ContainerSelected } from './styles'
 
@@ -20,6 +18,7 @@ type Options = {
 type Props = {
   items: Options[]
   onSelect: (items: Options[]) => void
+  maxSelected: number
 }
 
 type Data = Options & {
@@ -43,92 +42,109 @@ export type InputSearchDropdownProps = {
   onClearItems: () => void
 }
 
-const InputSearchDropdown = React.forwardRef(({ items, onSelect }: Props, ref: RefProps) => {
-  const [data, setData] = useState<Data[]>(() =>
-    items.map((item) => ({ ...item, selected: false, active: true }))
-  )
-  const [itemsPerPage, setItemsPerPage] = useState(SUM_MIN_ITEMS)
-  const [searchQuery, setSearchQuery] = useState('')
+const InputSearchDropdown = React.forwardRef(
+  ({ items, onSelect, maxSelected }: Props, ref?: RefProps) => {
+    const { height } = useWindowDimensions()
 
-  const [selectedItem, setSelectedItem] = useState<typeof data>([])
+    const [data, setData] = useState<Data[]>(() =>
+      items.map((item) => ({ ...item, selected: false, active: true }))
+    )
+    const [itemsPerPage, setItemsPerPage] = useState(SUM_MIN_ITEMS)
+    const [searchQuery, setSearchQuery] = useState('')
 
-  const onChangeSearch = (query: string) => setSearchQuery(query)
+    const [selectedItem, setSelectedItem] = useState<typeof data>([])
 
-  const sliceData = useMemo(() => {
-    if (searchQuery.trim().length === 0) {
-      return data.filter((item) => !selectedItem.includes(item)).slice(0, itemsPerPage)
-    }
+    const onChangeSearch = (query: string) => setSearchQuery(query)
 
-    return data
-      .filter((item) => {
-        const itemName = item.name.toLowerCase()
-        const query = searchQuery.toLowerCase()
-        return itemName.includes(query) && !selectedItem.includes(item)
-      })
-      .slice(0, itemsPerPage)
-  }, [data, searchQuery, itemsPerPage, selectedItem])
-
-  const onRemoveItem = (state: Data[], item: Data) => {
-    item.selected = false
-    item.active = true
-    const newState = state.filter((stateItem) => stateItem.rxcui !== item.rxcui)
-
-    onSelect(newState)
-    return newState
-  }
-
-  const onAddItem = (state: Data[], item: Data) => {
-    item.selected = true
-    item.active = false
-    const newState = [...state, item]
-    onSelect(newState)
-    return newState
-  }
-
-  const onClearItems = () => {
-    selectedItem.forEach((item) => {
-      item.selected = false
-    })
-    setSelectedItem([])
-    onSelect([])
-  }
-
-  const onToggleSelection = (item: Data) => {
-    setSelectedItem((state) => {
-      if (state.includes(item)) {
-        return onRemoveItem(state, item)
+    const sliceData = useMemo(() => {
+      if (searchQuery.trim().length === 0) {
+        return data.filter((item) => !selectedItem.includes(item)).slice(0, itemsPerPage)
       }
 
-      return onAddItem(state, item)
-    })
-  }
+      return data
+        .filter((item) => {
+          const itemName = item.name.toLowerCase()
+          const query = searchQuery.toLowerCase()
+          return itemName.includes(query) && !selectedItem.includes(item)
+        })
+        .slice(0, itemsPerPage)
+    }, [data, searchQuery, itemsPerPage, selectedItem])
 
-  const loadData = async () => {
-    if (!(sliceData.length < itemsPerPage)) {
-      await new Promise((resolve) => setTimeout(resolve, 50))
-      setItemsPerPage(itemsPerPage + SUM_MIN_ITEMS)
+    const onRemoveItem = (state: Data[], item: Data) => {
+      item.selected = false
+      item.active = true
+      const newState = state.filter((stateItem) => stateItem.rxcui !== item.rxcui)
+
+      onSelect(newState)
+      return newState
     }
-  }
 
-  ref.current = {
-    onToggleSelection,
-    onRemoveItem,
-    onAddItem,
-    onClearItems,
-  }
+    const onAddItem = (state: Data[], item: Data) => {
+      if (state.length === maxSelected) {
+        return state
+      }
 
-  const keyExtractor = useCallback((item) => item.rxcui.toString(), [])
+      item.selected = true
+      item.active = false
+      const newState = [...state, item]
+      onSelect(newState)
+      return newState
+    }
 
-  const renderItem = useCallback(
-    ({ item }) => (
-      <SelectableOption key={keyExtractor(item)} item={item} onPress={onToggleSelection} />
-    ),
-    []
-  )
+    const onClearItems = () => {
+      selectedItem.forEach((item) => {
+        item.selected = false
+      })
+      setSelectedItem([])
+      onSelect([])
+    }
 
-  return (
-    <Container>
-      <ScrollView style={{ flexGrow: 1 }}>
+    const onToggleSelection = (item: Data) => {
+      setSelectedItem((state) => {
+        if (state.includes(item)) {
+          return onRemoveItem(state, item)
+        }
+
+        return onAddItem(state, item)
+      })
+    }
+
+    const loadData = async () => {
+      if (!(sliceData.length < itemsPerPage)) {
+        await new Promise((resolve) => setTimeout(resolve, 50))
+        setItemsPerPage(itemsPerPage + SUM_MIN_ITEMS)
+      }
+    }
+
+    ref.current = {
+      onToggleSelection,
+      onRemoveItem,
+      onAddItem,
+      onClearItems,
+    }
+
+    const keyExtractor = useCallback((item) => item.rxcui.toString(), [])
+
+    const renderItem = useCallback(
+      ({ item }) => (
+        <SelectableOption key={keyExtractor(item)} item={item} onPress={onToggleSelection} />
+      ),
+      []
+    )
+
+    const renderSelectedItem = useCallback(
+      () => (
+        <ContainerSelected>
+          {selectedItem.map((item) => (
+            <SelectableOption key={item.rxcui} item={item} onPress={onToggleSelection} />
+          ))}
+        </ContainerSelected>
+      ),
+      [selectedItem]
+    )
+
+    return (
+      <Container>
         <View>
           <Searchbar
             placeholder="Procure os Medicamentos"
@@ -138,26 +154,17 @@ const InputSearchDropdown = React.forwardRef(({ items, onSelect }: Props, ref: R
               zIndex: 10,
             }}
           />
-          <ContainerSelected>
-            {selectedItem.map((item) => (
-              <SelectableOption key={item.rxcui} item={item} onPress={onToggleSelection} />
-            ))}
-          </ContainerSelected>
         </View>
-        <SafeAreaView>
-          <ViewList
-            onEndReached={loadData}
-            nestedScrollEnabled
-            style={{
-              maxHeight: 250,
-            }}
-          >
-            {sliceData.map((item) => renderItem({ item }))}
-          </ViewList>
-        </SafeAreaView>
-      </ScrollView>
-    </Container>
-  )
-})
+        <FlatList
+          data={sliceData}
+          onEndReached={loadData}
+          keyExtractor={keyExtractor}
+          ListHeaderComponent={renderSelectedItem}
+          renderItem={renderItem}
+        />
+      </Container>
+    )
+  }
+)
 
 export default InputSearchDropdown

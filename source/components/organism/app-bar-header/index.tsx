@@ -4,7 +4,6 @@ import { Appbar } from 'react-native-paper'
 import { RFValue } from 'react-native-responsive-fontsize'
 
 import theme from '@/theme'
-import { AntDesign } from '@expo/vector-icons'
 
 import { useDrawer } from '@/context/drawer-context'
 
@@ -29,10 +28,10 @@ const CustomNavigationBar = ({ navigation, back, options }: Props) => {
         backgroundColor: theme.COLORS.TOPBAR,
       }}
     >
-      <Appbar.Action
+      {/* <Appbar.Action
         icon={() => <AntDesign name="menuunfold" size={RFValue(20)} color="white" />}
         onPress={openDrawer}
-      />
+      /> */}
       <Appbar.Content
         title={options.tabBarLabel}
         titleStyle={{
@@ -43,7 +42,7 @@ const CustomNavigationBar = ({ navigation, back, options }: Props) => {
           textAlign: 'center',
         }}
       />
-      <Appbar.Action icon="menu" color="transparent" />
+      {/* <Appbar.Action icon="menu" color="transparent" /> */}
     </Appbar.Header>
   )
 }
